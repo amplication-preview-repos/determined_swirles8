@@ -1,0 +1,64 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DB_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Video {
+  createdAt         DateTime       @default(now())
+  description       String?
+  id                String         @id @default(cuid())
+  schedules         Schedule[]
+  title             String?
+  updatedAt         DateTime       @updatedAt
+  videoDetailsItems VideoDetails[]
+  videoId           String?
+}
+
+model VideoDetails {
+  createdAt DateTime @default(now())
+  duration  Int?
+  id        String   @id @default(cuid())
+  language  String?
+  tags      String?
+  updatedAt DateTime @updatedAt
+  video     Video?   @relation(fields: [videoId], references: [id])
+  videoId   String?
+}
+
+model Schedule {
+  createdAt   DateTime            @default(now())
+  id          String              @id @default(cuid())
+  publishDate DateTime?
+  status      EnumScheduleStatus?
+  updatedAt   DateTime            @updatedAt
+  video       Video?              @relation(fields: [videoId], references: [id])
+  videoId     String?
+}
+
+model ExcelFile {
+  createdAt  DateTime  @default(now())
+  filePath   String?
+  id         String    @id @default(cuid())
+  updatedAt  DateTime  @updatedAt
+  uploadedAt DateTime?
+}
+
+model User {
+  createdAt DateTime @default(now())
+  email     String?  @unique
+  firstName String?
+  id        String   @id @default(cuid())
+  lastName  String?
+  password  String
+  roles     Json
+  updatedAt DateTime @updatedAt
+  username  String   @unique
+}
+
+enum EnumScheduleStatus {
+  Option1
+}
